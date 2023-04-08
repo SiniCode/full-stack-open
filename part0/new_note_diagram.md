@@ -1,4 +1,4 @@
-# Adding new note: sequence diagram
+# Adding a new note: sequence diagram
 
 ```mermaid
 sequenceDiagram
@@ -7,6 +7,8 @@ sequenceDiagram
   
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate server
+    Note right of browser: The input data is sent to the server as the body of the POST request.
+    Note right of server: The server creates a new note object,<br> and adds it to an array called notes.
     server-->>browser: redirect to /exampleapp/notes
     deactivate server
   
@@ -23,7 +25,7 @@ sequenceDiagram
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.js
     activate server
     server-->>browser: the JavaScript file
-    deactivate browser
+    deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
