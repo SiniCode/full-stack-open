@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
 import peopleService from './services/people'
-import Person from './components/person'
+import PeopleView from './components/people_view'
 import PersonForm from './components/person_form'
 import FilterInput from './components/filter_input'
+import Notification from './components/notification'
 
 const App = () => {
   const [people, setPeople] = useState([])
-  const [peopleToShow, setPeopleToShow] = useState(people)
+  const [peopleToShow, setPeopleToShow] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     peopleService
@@ -19,6 +21,13 @@ const App = () => {
         setPeopleToShow(initialPeople)
       })
   }, [])
+
+  const updateMessage = (messageText, messageStyle) => {
+    setMessage({messageText: messageText, messageStyle: messageStyle})
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -33,14 +42,19 @@ const App = () => {
           peopleService
             .update(person.id, changedPerson)
             .then(returnedPerson => {
+              updateMessage(
+                `The number of ${returnedPerson.name} is now ${returnedPerson.number}.`,
+                'success'
+              )
               setPeople(people.map(p => p.id !== person.id ? p : returnedPerson))
               setPeopleToShow(peopleToShow.map(p => p.id !== person.id ? p : returnedPerson))
               setNewName('')
               setNewNumber('')
             })
             .catch(error => {
-              alert(
-                `${person.name} was already deleted from server.`
+              updateMessage(
+                `${person.name} was already deleted from server.`,
+                'error'
               )
               setPeople(people.filter(p => p.id !== person.id))
               setPeopleToShow(peopleToShow.filter(p => p.id !== person.id))
@@ -53,6 +67,10 @@ const App = () => {
       peopleService
         .create(personObject)
         .then(returnedPerson => {
+          updateMessage(
+            `${returnedPerson.name} is now in the phonebook.`,
+            'success'
+          )
           setPeople(people.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
@@ -74,25 +92,27 @@ const App = () => {
     setNewSearch(searchWord)
     setPeopleToShow(people.filter(isMatch))
   }
+
   const removePerson = (id, personName) => {
     if (window.confirm(`Are you sure you want to delete ${personName}?`)) {
       peopleService
         .remove(id)
         .then(returnedData => {
+          updateMessage(
+            `${personName} was removed from the phonebook.`,
+            'success'
+          )
           setPeople(people.filter(person => person.name !== personName))
           setPeopleToShow(peopleToShow.filter(person => person.name !== personName))
         })
         .catch(error => console.log(error))
     }
-
-    else {
-      console.log('Person not found')
-    }
   }
 
   return (
-    <div>
+    <div className='phonebook'>
       <h1>Phonebook</h1>
+      <Notification message={message} />
       <h2>Add new number</h2>
       <PersonForm
         addPerson={addPerson}
@@ -107,18 +127,10 @@ const App = () => {
         handleSearchChange={handleSearchChange}
       />
       <h2>Numbers</h2>
-      {peopleToShow.map(
-        person =>
-          <Person
-            key={person.id}
-            name={person.name}
-            number={person.number}
-            removePerson={() => removePerson(
-              person.id,
-              person.name)
-            }
-          />
-      )}
+      <PeopleView
+        people={peopleToShow}
+        remove={removePerson}
+      />
     </div>
   )
 }

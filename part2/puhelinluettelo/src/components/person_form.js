@@ -2,15 +2,13 @@ const PersonForm = (props) => {
     return (
       <form onSubmit={props.addPerson}>
         <div>
-          Name: <input value={props.newName} onChange={props.handleNameChange} />
+          <b>Name:</b>
+          <input value={props.newName} onChange={props.handleNameChange} />
         </div>
-        <br/>
         <div>
-          Number: <input value={props.newNumber} onChange={props.handleNumberChange} />
-        </div>
-        <br/>
-        <div>
-          <button type="submit">Add</button>
+          <b>Number:</b>
+          <input value={props.newNumber} onChange={props.handleNumberChange} />
+          <button type="submit" className="addButton">Add to phonebook</button>
         </div>
       </form>
     )

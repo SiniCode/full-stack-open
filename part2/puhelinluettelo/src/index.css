@@ -1,0 +1,63 @@
+.phonebook {
+    width: 600px;
+    margin: auto;
+    padding: 40px;
+    font-family: "Open Sans", sans-serif;
+    background-color: rgb(171, 206, 187);
+    color: darkslategrey;
+}
+
+input {
+    margin: 10px;
+    padding: 5px;
+    background-color: rgb(240, 255, 253);
+    border-radius: 5px;
+}
+
+table {
+    background-color: rgb(236, 237, 211);
+    padding: 10px;
+    border-style: solid;
+    text-align: left;
+}
+
+button {
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(238, 147, 120);
+    color: rgb(0, 51, 51);
+}
+
+button:hover {
+    background-color: rgb(250, 201, 181);
+}
+
+.addButton {
+    margin-left: 5px;
+    background-color: rgb(88, 129, 129);
+    color: rgb(240, 255, 253);
+}
+
+.addButton:hover {
+    background-color: teal;
+}
+
+.success {
+    color: darkslategrey;
+    background: rgb(240, 255, 253);
+    font-size: 15px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+
+.error {
+    color: rgb(206, 90, 54);
+    background: rgb(240, 238, 229);
+    font-size: 15px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+}
