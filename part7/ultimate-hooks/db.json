@@ -1,0 +1,68 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "custom-hooks are awesome!"
+    },
+    {
+      "id": 2,
+      "content": "best feature ever <3"
+    },
+    {
+      "content": "testing hook",
+      "id": 3
+    },
+    {
+      "content": "tyhjeneekö?",
+      "id": 4
+    },
+    {
+      "content": "entä nyt?",
+      "id": 5
+    },
+    {
+      "content": "testingtesting...",
+      "id": 6
+    },
+    {
+      "content": "another try",
+      "id": 7
+    },
+    {
+      "content": "now?",
+      "id": 8
+    },
+    {
+      "id": 9
+    },
+    {
+      "id": 10
+    },
+    {
+      "content": "blaah",
+      "id": 11
+    }
+  ],
+  "persons": [
+    {
+      "id": 1,
+      "name": "mluukkai",
+      "number": "040-5483923"
+    },
+    {
+      "id": 2,
+      "name": "hellas",
+      "number": "012-123123"
+    },
+    {
+      "name": "test name",
+      "number": "050-1234567",
+      "id": 3
+    },
+    {
+      "name": "etu nimi",
+      "number": "020202",
+      "id": 4
+    }
+  ]
+}
