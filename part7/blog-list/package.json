@@ -1,0 +1,21 @@
+{
+  "name": "blog-list",
+  "version": "1.0.0",
+  "description": "",
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "3.2.5"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "useTabs": true,
+    "semi": false,
+    "singleQuote": true,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": true,
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always"
+  }
+}
