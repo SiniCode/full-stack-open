@@ -29,7 +29,7 @@ const createBlog = async (page, title, author, url) => {
 	await page.getByTestId('url').fill(url)
 	await page.getByRole('button', { name: 'Create' }).click()
 
-	await page.getByText(`${title} by ${author}`).waitFor()
+	await page.getByText(`${title} by ${author}view`).waitFor()
 }
 
 const likeTimes = async (page, button, n) => {
