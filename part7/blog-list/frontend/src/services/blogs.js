@@ -12,8 +12,12 @@ const getAll = () => {
 	return request.then((response) => response.data)
 }
 
-const update = (id, newObject) => {
-	const request = axios.put(`${baseUrl}/${id}`, newObject, getConfit())
+const update = (updatedBlog) => {
+	const request = axios.put(
+		`${baseUrl}/${updatedBlog.id}`,
+		updatedBlog,
+		getConfit()
+	)
 	return request.then((response) => response.data)
 }
 

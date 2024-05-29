@@ -75,7 +75,7 @@ describe('Note app', () => {
 				await page.getByRole('button', { name: 'remove' }).click()
 
 				await expect(
-					page.getByText('Testing with Playwright by Ted Tester')
+					page.getByText('Testing with Playwright by Ted Testerhide')
 				).not.toBeVisible()
 			})
 
