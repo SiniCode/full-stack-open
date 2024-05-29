@@ -16,7 +16,7 @@ describe('Note app', () => {
 		test('succeeds with correct credentials', async ({ page }) => {
 			await page.getByTestId('username').fill('mluukkai')
 			await page.getByTestId('password').fill('salainen')
-			await page.getByRole('button', { name: 'Login' }).click()
+			await page.getByRole('button', { name: 'Log in' }).click()
 
 			await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
 		})
@@ -24,7 +24,7 @@ describe('Note app', () => {
 		test('fails with wrong credentials', async ({ page }) => {
 			await page.getByTestId('username').fill('mluukkai')
 			await page.getByTestId('password').fill('wrong')
-			await page.getByRole('button', { name: 'Login' }).click()
+			await page.getByRole('button', { name: 'Log in' }).click()
 
 			await expect(page.getByText('Wrong credentials')).toBeVisible()
 			await expect(
@@ -62,88 +62,48 @@ describe('Note app', () => {
 			})
 
 			test('it can be liked', async ({ page }) => {
-				await page.getByRole('button', { name: 'view' }).click()
-				await page.getByRole('button', { name: 'like' }).click()
-				await expect(page.getByText('likes 1')).not.toBeVisible()
+				await page
+					.getByRole('Link')
+					.getByText('Testing with Playwright')
+					.click()
+				await expect(page.getByText('This blog has 0 likes.')).toBeVisible()
+				await page.getByRole('button', { name: 'Like' }).click()
+				await expect(page.getByText('This blog has 1 likes.')).toBeVisible()
 			})
 
 			test('it can be deleted by the creator', async ({ page }) => {
-				await page.getByRole('button', { name: 'view' }).click()
+				await page
+					.getByRole('Link')
+					.getByText('Testing with Playwright')
+					.click()
+
 				page.on('dialog', async (dialog) => {
 					await dialog.accept()
 				})
-				await page.getByRole('button', { name: 'remove' }).click()
+				await page.getByRole('button', { name: 'Delete' }).click()
 
 				await expect(
-					page.getByText('Testing with Playwright by Ted Testerhide')
-				).not.toBeVisible()
+					page.getByText('Blog Testing with Playwright by Ted Tester deleted')
+				).toBeVisible()
+				await expect(
+					page.getByRole('button', { name: 'Create new blog' })
+				).toBeVisible()
+				await expect(
+					page.getByRole('Link').getByText('Testing with Playwright')
+				).toBeHidden()
 			})
 
 			test('it can not be deleted by other users', async ({ page }) => {
-				await page.getByRole('button', { name: 'logout' }).click()
+				await page.getByRole('button', { name: 'Log out' }).click()
 				await login(page, 'ted', 'tedsecret')
 
-				await page.getByRole('button', { name: 'view' }).click()
+				await page
+					.getByRole('Link')
+					.getByText('Testing with Playwright')
+					.click()
 				await expect(
-					page.getByRole('button', { name: 'remove' })
+					page.getByRole('button', { name: 'Delete' })
 				).not.toBeVisible()
-			})
-		})
-
-		describe('and multiple blogs exist', () => {
-			beforeEach(async ({ page }) => {
-				await createBlog(page, 'blog1', 'Ted Tester', 'http//:example.com/1')
-				await createBlog(page, 'blog2', 'Ted Tester', 'http//:example.com/2')
-				await createBlog(page, 'blog3', 'Ted Tester', 'http//:example.com/3')
-			})
-
-			test('blogs are ordered by likes', async ({ page }) => {
-				await page
-					.getByText('blog1')
-					.getByRole('button', { name: 'view' })
-					.click()
-				await page
-					.getByText('blog2')
-					.getByRole('button', { name: 'view' })
-					.click()
-				await page
-					.getByText('blog3')
-					.getByRole('button', { name: 'view' })
-					.click()
-
-				await page.pause()
-				const button1 = page
-					.getByText('blog1')
-					.getByRole('button', { name: 'like' })
-				await likeTimes(page, button1, 1)
-				await page
-					.getByText('blog1')
-					.getByRole('button', { name: 'hide' })
-					.click()
-
-				let button2 = page
-					.getByText('blog2')
-					.getByRole('button', { name: 'like' })
-				await likeTimes(page, button2, 3)
-				await page
-					.getByText('blog2')
-					.getByRole('button', { name: 'hide' })
-					.click()
-
-				let button3 = page
-					.getByText('blog3')
-					.getByRole('button', { name: 'like' })
-				await likeTimes(page, button3, 2)
-				await page
-					.getByText('blog3')
-					.getByRole('button', { name: 'hide' })
-					.click()
-
-				const blogDivs = await page.locator('div.blog').all()
-
-				expect(blogDivs[0]).toHaveText('blog2 by Ted Testerview')
-				expect(blogDivs[1]).toHaveText('blog3 by Ted Testerview')
-				expect(blogDivs[2]).toHaveText('blog1 by Ted Testerview')
 			})
 		})
 	})

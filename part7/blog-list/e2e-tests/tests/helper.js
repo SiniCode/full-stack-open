@@ -19,7 +19,7 @@ const resetDatabase = async (request) => {
 const login = async (page, username, password) => {
 	await page.getByTestId('username').fill(username)
 	await page.getByTestId('password').fill(password)
-	await page.getByRole('button', { name: 'Login' }).click()
+	await page.getByRole('button', { name: 'Log in' }).click()
 }
 
 const createBlog = async (page, title, author, url) => {
@@ -29,7 +29,7 @@ const createBlog = async (page, title, author, url) => {
 	await page.getByTestId('url').fill(url)
 	await page.getByRole('button', { name: 'Create' }).click()
 
-	await page.getByText(`${title} by ${author}view`).waitFor()
+	await page.getByRole('Link').getByText(`${title} by ${author}`).waitFor()
 }
 
 const likeTimes = async (page, button, n) => {

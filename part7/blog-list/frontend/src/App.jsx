@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState, useEffect, createRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNotificationDispatch } from './NotificationContext'
@@ -5,15 +6,30 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import storage from './services/storage'
 import Login from './components/Login'
-import Blog from './components/Blog'
-import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
+import Blog from './components/Blog'
+import NavBar from './components/NavBar'
 
 const App = () => {
 	const [user, setUser] = useState(null)
-	const notificationDispatch = useNotificationDispatch()
+	useEffect(() => {
+		const user = storage.loadUser()
+		if (user) {
+			setUser(user)
+		}
+	}, [])
 
+	const notificationDispatch = useNotificationDispatch()
+	const notify = (content) => {
+		notificationDispatch({ type: 'SET_MESSAGE', payload: content })
+		setTimeout(
+			() => notificationDispatch({ type: 'SET_MESSAGE', payload: null }),
+			5000
+		)
+	}
+
+	const blogFormRef = createRef()
 	const queryClient = useQueryClient()
 
 	const newBlogMutation = useMutation({
@@ -24,30 +40,16 @@ const App = () => {
 
 	const likeMutation = useMutation({
 		mutationFn: blogService.update,
-		onSuccess: () => queryClient.invalidateQueries('blogs'),
+		onSuccess: () =>
+			queryClient.invalidateQueries(
+				'<Link to={`/users/${user.id}`} >{user.name}</Link>blogs'
+			),
 	})
 
 	const deleteMutation = useMutation({
 		mutationFn: blogService.remove,
 		onSuccess: queryClient.invalidateQueries(['blogs']),
 	})
-
-	useEffect(() => {
-		const user = storage.loadUser()
-		if (user) {
-			setUser(user)
-		}
-	}, [])
-
-	const blogFormRef = createRef()
-
-	const notify = (content) => {
-		notificationDispatch({ type: 'SET_MESSAGE', payload: content })
-		setTimeout(
-			() => notificationDispatch({ type: 'SET_MESSAGE', payload: null }),
-			5000
-		)
-	}
 
 	const handleLogin = async (credentials) => {
 		try {
@@ -80,26 +82,18 @@ const App = () => {
 	}
 
 	const handleDelete = async (blog) => {
-		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+		if (window.confirm(`Delete blog ${blog.title} by ${blog.author}`)) {
 			deleteMutation.mutate(blog.id)
-			notify(`Blog ${blog.title} by ${blog.author} removed`)
+			notify(`Blog ${blog.title} by ${blog.author} deleted`)
+			return true
 		}
+		return false
 	}
 
 	const blogQueryResult = useQuery({
 		queryKey: ['blogs'],
 		queryFn: blogService.getAll,
 	})
-
-	if (!user) {
-		return (
-			<div>
-				<h2>blogs</h2>
-				<Notification />
-				<Login doLogin={handleLogin} />
-			</div>
-		)
-	}
 
 	if (blogQueryResult.isLoading) {
 		return <div>Loading...</div>
@@ -110,28 +104,38 @@ const App = () => {
 	} else {
 		const blogs = blogQueryResult.data
 
-		const byLikes = (a, b) => b.likes - a.likes
-
 		return (
-			<div>
-				<h2>blogs</h2>
+			<BrowserRouter>
+				{user && <NavBar user={user} logout={handleLogout} />}
+				<h1>Blog List App</h1>
 				<Notification />
-				<div>
-					{user.name} logged in
-					<button onClick={handleLogout}>logout</button>
-				</div>
-				<Togglable buttonLabel='create new blog' ref={blogFormRef}>
-					<NewBlog doCreate={handleCreate} />
-				</Togglable>
-				{blogs.sort(byLikes).map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						handleLike={handleLike}
-						handleDelete={handleDelete}
+				<Routes>
+					<Route
+						path='/'
+						element={
+							user ? (
+								<BlogList
+									blogs={blogs}
+									handleCreate={handleCreate}
+									blogFormRef={blogFormRef}
+								/>
+							) : (
+								<Login doLogin={handleLogin} />
+							)
+						}
 					/>
-				))}
-			</div>
+					<Route
+						path='/blogs/:id'
+						element={
+							<Blog
+								blogs={blogs}
+								handleLike={handleLike}
+								handleDelete={handleDelete}
+							/>
+						}
+					/>
+				</Routes>
+			</BrowserRouter>
 		)
 	}
 }
