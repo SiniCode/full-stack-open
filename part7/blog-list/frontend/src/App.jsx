@@ -1,3 +1,4 @@
+import { Container, Typography, Card } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState, useEffect, createRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -53,22 +54,22 @@ const App = () => {
 			const user = await loginService.login(credentials)
 			setUser(user)
 			storage.saveUser(user)
-			notify(`Welcome back, ${user.name}`)
+			notify(`Welcome back, ${user.name}!`)
 		} catch (error) {
-			notify('Wrong credentials', 'error')
+			notify('Invalid credentials!')
 		}
 	}
 
 	const handleCreate = async (blog) => {
 		newBlogMutation.mutate(blog)
-		notify(`Blog created: ${blog.title} by ${blog.author}`)
+		notify(`Blog created: '${blog.title}' by ${blog.author}`)
 		blogFormRef.current.toggleVisibility()
 	}
 
 	const handleLike = async (blog) => {
 		const updatedBlog = { ...blog, likes: blog.likes + 1 }
 		updateMutation.mutate(updatedBlog)
-		notify(`You liked ${updatedBlog.title} by ${updatedBlog.author}`)
+		notify(`You liked '${updatedBlog.title}' by ${updatedBlog.author}.`)
 	}
 
 	const handleComment = async (blog, comment) => {
@@ -83,9 +84,9 @@ const App = () => {
 	}
 
 	const handleDelete = async (blog) => {
-		if (window.confirm(`Delete blog ${blog.title} by ${blog.author}`)) {
+		if (window.confirm(`Delete blog '${blog.title}' by ${blog.author}?`)) {
 			deleteMutation.mutate(blog.id)
-			notify(`Blog ${blog.title} by ${blog.author} deleted`)
+			notify(`Blog '${blog.title}' by ${blog.author} deleted.`)
 			return true
 		}
 		return false
@@ -106,38 +107,44 @@ const App = () => {
 		const blogs = blogQueryResult.data
 
 		return (
-			<BrowserRouter>
-				{user && <NavBar user={user} logout={handleLogout} />}
-				<h1>Blog List App</h1>
-				<Notification />
-				<Routes>
-					<Route
-						path='/'
-						element={
-							user ? (
-								<BlogList
-									blogs={blogs}
-									handleCreate={handleCreate}
-									blogFormRef={blogFormRef}
-								/>
-							) : (
-								<Login doLogin={handleLogin} />
-							)
-						}
-					/>
-					<Route
-						path='/blogs/:id'
-						element={
-							<Blog
-								blogs={blogs}
-								handleLike={handleLike}
-								handleDelete={handleDelete}
-								handleComment={handleComment}
+			<Container>
+				<BrowserRouter>
+					{user && <NavBar user={user} logout={handleLogout} />}
+					<Card style={{ padding: 20 }}>
+						<Typography component='h1' variant='h1' align='center'>
+							Blog List App
+						</Typography>
+						<Notification />
+						<Routes>
+							<Route
+								path='/'
+								element={
+									user ? (
+										<BlogList
+											blogs={blogs}
+											handleCreate={handleCreate}
+											blogFormRef={blogFormRef}
+										/>
+									) : (
+										<Login doLogin={handleLogin} />
+									)
+								}
 							/>
-						}
-					/>
-				</Routes>
-			</BrowserRouter>
+							<Route
+								path='/blogs/:id'
+								element={
+									<Blog
+										blogs={blogs}
+										handleLike={handleLike}
+										handleDelete={handleDelete}
+										handleComment={handleComment}
+									/>
+								}
+							/>
+						</Routes>
+					</Card>
+				</BrowserRouter>
+			</Container>
 		)
 	}
 }

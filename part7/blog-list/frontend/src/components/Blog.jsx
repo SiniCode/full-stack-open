@@ -1,4 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { Button, Typography, Link, Avatar, Stack } from '@mui/material'
+import { purple } from '@mui/material/colors'
 import storage from '../services/storage'
 import CommentSection from './CommentSection'
 
@@ -26,16 +28,46 @@ const Blog = ({ blogs, handleLike, handleDelete, handleComment }) => {
 
 	return (
 		<div>
-			<h2>
+			<Typography
+				component='h2'
+				variant='h5'
+				style={{ marginTop: 20, marginBottom: 20 }}
+			>
 				{blog.title} by {blog.author}
-			</h2>
-			<p>
-				For more information, see <a href={blog.url}>{blog.url}</a>.
-			</p>
-			<p>This blog has {blog.likes} likes.</p>
-			<button onClick={() => handleLike(blog)}>Like</button>
-			<p>This blog was added by {nameOfUser}.</p>
-			{canRemove && <button onClick={() => deleteBlog(blog)}>Delete</button>}
+			</Typography>
+			<Typography component='p' variant='body1'>
+				This blog was added by <b>{nameOfUser}</b>.
+			</Typography>
+			<Typography component='p' variant='body1'>
+				For more information, see{' '}
+				<Link href={blog.url} underline='hover'>
+					{blog.url}
+				</Link>
+				.
+			</Typography>
+			<Stack direction='row' spacing={1} alignItems='center'>
+				<Typography component='p' variant='body1'>
+					Number of likes:
+				</Typography>
+				<Avatar sx={{ bgcolor: purple[500] }}>{blog.likes}</Avatar>
+				<Button
+					onClick={() => handleLike(blog)}
+					variant='outlined'
+					color='secondary'
+				>
+					Like
+				</Button>
+			</Stack>
+			{canRemove && (
+				<Button
+					onClick={() => deleteBlog(blog)}
+					variant='contained'
+					color='warning'
+					style={{ marginTop: 10, marginBottom: 20 }}
+				>
+					Delete
+				</Button>
+			)}
 			<CommentSection blog={blog} addComment={handleComment} />
 		</div>
 	)

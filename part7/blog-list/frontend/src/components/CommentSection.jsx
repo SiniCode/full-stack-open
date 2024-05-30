@@ -1,4 +1,14 @@
 import React, { useState } from 'react'
+import {
+	TextField,
+	Button,
+	List,
+	ListItem,
+	ListItemText,
+	Typography,
+	Stack,
+} from '@mui/material'
+import CommentIcon from '@mui/icons-material/Comment'
 
 const CommentSection = ({ blog, addComment }) => {
 	const [comment, setComment] = useState('')
@@ -13,21 +23,31 @@ const CommentSection = ({ blog, addComment }) => {
 	}
 	return (
 		<div>
-			<h3>Comments</h3>
-			<ul>
+			<Typography component='h3' variant='h6'>
+				Comments
+			</Typography>
+			<List>
 				{blog.comments.map((comment, idx) => (
-					<li key={`comment${idx}`}>{comment}</li>
+					<ListItem key={`comment${idx}`}>
+						<CommentIcon />
+						<ListItemText style={{ marginLeft: 10 }}>{comment}</ListItemText>
+					</ListItem>
 				))}
-			</ul>
+			</List>
 			<form onSubmit={handleSubmit}>
-				<label>New comment:</label>
-				<input
-					type='text'
-					data-testid='comment'
-					value={comment}
-					onChange={handleCommentChange}
-				/>
-				<button type='submit'>Send comment</button>
+				<Stack spacing={1}>
+					<TextField
+						type='text'
+						id='comment'
+						value={comment}
+						onChange={handleCommentChange}
+						label='New comment'
+						color='secondary'
+					/>
+					<Button type='submit' variant='contained' color='secondary'>
+						Send comment
+					</Button>
+				</Stack>
 			</form>
 		</div>
 	)

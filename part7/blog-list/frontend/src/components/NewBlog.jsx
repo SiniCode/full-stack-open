@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { TextField, Typography, Button, Stack } from '@mui/material'
 
 const NewBlog = ({ doCreate }) => {
 	const [title, setTitle] = useState('')
@@ -27,36 +28,47 @@ const NewBlog = ({ doCreate }) => {
 
 	return (
 		<div>
-			<h2>Create a New Blog</h2>
+			<Typography component='h3' variant='h5' style={{ marginTop: 20 }}>
+				Create New Blog
+			</Typography>
 			<form onSubmit={handleSubmit}>
-				<div>
-					<label>Title:</label>
-					<input
+				<Stack spacing={2} maxWidth={400} marginTop={2}>
+					<TextField
+						color='secondary'
+						id='title'
+						label='Title'
+						variant='outlined'
 						type='text'
-						data-testid='title'
 						value={title}
 						onChange={handleTitleChange}
 					/>
-				</div>
-				<div>
-					<label>URL:</label>
-					<input
+					<TextField
+						color='secondary'
+						id='url'
+						label='URL'
+						variant='outlined'
 						type='text'
-						data-testid='url'
 						value={url}
 						onChange={handleUrlChange}
 					/>
-				</div>
-				<div>
-					<label>Author:</label>
-					<input
+					<TextField
+						color='secondary'
+						id='author'
+						label='Author'
+						variant='outlined'
 						type='text'
-						data-testid='author'
 						value={author}
 						onChange={handleAuthorChange}
 					/>
-				</div>
-				<button type='submit'>Create</button>
+					<Button
+						type='submit'
+						variant='contained'
+						color='secondary'
+						style={{ marginBottom: 10 }}
+					>
+						Create
+					</Button>
+				</Stack>
 			</form>
 		</div>
 	)
