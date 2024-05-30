@@ -38,12 +38,9 @@ const App = () => {
 		onError: () => notify('Adding the blog failed.'),
 	})
 
-	const likeMutation = useMutation({
+	const updateMutation = useMutation({
 		mutationFn: blogService.update,
-		onSuccess: () =>
-			queryClient.invalidateQueries(
-				'<Link to={`/users/${user.id}`} >{user.name}</Link>blogs'
-			),
+		onSuccess: () => queryClient.invalidateQueries(['blogs']),
 	})
 
 	const deleteMutation = useMutation({
@@ -69,10 +66,14 @@ const App = () => {
 	}
 
 	const handleLike = async (blog) => {
-		console.log('updating', blog)
 		const updatedBlog = { ...blog, likes: blog.likes + 1 }
-		likeMutation.mutate(updatedBlog)
+		updateMutation.mutate(updatedBlog)
 		notify(`You liked ${updatedBlog.title} by ${updatedBlog.author}`)
+	}
+
+	const handleComment = async (blog, comment) => {
+		const updatedBlog = { ...blog, comments: blog.comments.concat(comment) }
+		updateMutation.mutate(updatedBlog)
 	}
 
 	const handleLogout = () => {
@@ -131,6 +132,7 @@ const App = () => {
 								blogs={blogs}
 								handleLike={handleLike}
 								handleDelete={handleDelete}
+								handleComment={handleComment}
 							/>
 						}
 					/>

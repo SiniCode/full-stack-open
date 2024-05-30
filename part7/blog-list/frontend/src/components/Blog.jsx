@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import storage from '../services/storage'
+import CommentSection from './CommentSection'
 
-const Blog = ({ blogs, handleLike, handleDelete }) => {
+const Blog = ({ blogs, handleLike, handleDelete, handleComment }) => {
 	const navigate = useNavigate()
 	const id = useParams().id
 	const blog = blogs.find((b) => b.id === id)
@@ -35,6 +36,7 @@ const Blog = ({ blogs, handleLike, handleDelete }) => {
 			<button onClick={() => handleLike(blog)}>Like</button>
 			<p>This blog was added by {nameOfUser}.</p>
 			{canRemove && <button onClick={() => deleteBlog(blog)}>Delete</button>}
+			<CommentSection blog={blog} addComment={handleComment} />
 		</div>
 	)
 }

@@ -1,7 +1,5 @@
-const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 const userExtractor = require('../utils/middleware').userExtractor
 
 router.get('/', async (request, response) => {
@@ -24,6 +22,7 @@ router.post('/', userExtractor, async (request, response) => {
 	}
 
 	blog.likes = blog.likes | 0
+	blog.comments = []
 	blog.user = user
 	user.blogs = user.blogs.concat(blog._id)
 
@@ -65,6 +64,7 @@ router.put('/:id', async (request, response) => {
 		author: body.author,
 		url: body.url,
 		likes: body.likes,
+		comments: body.comments,
 	}
 
 	const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
