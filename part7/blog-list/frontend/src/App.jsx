@@ -110,8 +110,13 @@ const App = () => {
 			<Container>
 				<BrowserRouter>
 					{user && <NavBar user={user} logout={handleLogout} />}
-					<Card style={{ padding: 20 }}>
-						<Typography component='h1' variant='h1' align='center'>
+					<Card style={{ padding: 40 }}>
+						<Typography
+							component='h1'
+							variant='h1'
+							align='center'
+							style={{ marginBottom: 40 }}
+						>
 							Blog List App
 						</Typography>
 						<Notification />

@@ -1,32 +1,36 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { resetDatabase, login, createBlog, likeTimes } = require('./helper')
+const { resetDatabase, login, createBlog } = require('./helper')
 
-describe('Note app', () => {
+describe('Blog list app', () => {
 	beforeEach(async ({ page, request }) => {
 		await resetDatabase(request)
 		await page.goto('')
 	})
 
 	test('Login form is shown', async ({ page }) => {
-		await expect(page.getByText('Username:')).toBeVisible()
-		await expect(page.getByText('Password:')).toBeVisible()
+		await expect(page.getByTestId('username')).toBeVisible()
+		await expect(page.getByTestId('password')).toBeVisible()
 	})
 
 	describe('Login', () => {
 		test('succeeds with correct credentials', async ({ page }) => {
-			await page.getByTestId('username').fill('mluukkai')
-			await page.getByTestId('password').fill('salainen')
-			await page.getByRole('button', { name: 'Log in' }).click()
+			await page.getByTestId('username').click()
+			await page.keyboard.type('mluukkai')
+			await page.getByTestId('password').click()
+			await page.keyboard.type('salainen')
+			await page.getByRole('Button', { name: 'Log in' }).click()
 
 			await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
 		})
 
 		test('fails with wrong credentials', async ({ page }) => {
-			await page.getByTestId('username').fill('mluukkai')
-			await page.getByTestId('password').fill('wrong')
-			await page.getByRole('button', { name: 'Log in' }).click()
+			await page.getByTestId('username').click()
+			await page.keyboard.type('mluukkai')
+			await page.keyboard.press('Tab')
+			await page.keyboard.type('wrong')
+			await page.getByRole('Button', { name: 'Log in' }).click()
 
-			await expect(page.getByText('Wrong credentials')).toBeVisible()
+			await expect(page.getByText('Invalid credentials!')).toBeVisible()
 			await expect(
 				page.getByText('Matti Luukkainen logged in')
 			).not.toBeVisible()
@@ -39,12 +43,15 @@ describe('Note app', () => {
 		})
 
 		test('a new blog can be created', async ({ page }) => {
-			await page.getByRole('button', { name: 'create new blog' }).click()
+			await page.getByRole('Button', { name: 'Create new blog' }).click()
 
-			await page.getByTestId('title').fill('Testing with Playwright')
-			await page.getByTestId('author').fill('Ted Tester')
-			await page.getByTestId('url').fill('http//:example.com')
-			await page.getByRole('button', { name: 'Create' }).click()
+			await page.getByTestId('title').click()
+			await page.keyboard.type('Testing with Playwright')
+			await page.keyboard.press('Tab')
+			await page.keyboard.type('http//:example.com')
+			await page.keyboard.press('Tab')
+			await page.keyboard.type('Ted Tester')
+			await page.getByRole('Button', { name: 'Create' }).click()
 
 			await expect(
 				page.getByText('Testing with Playwright by Ted Tester')
@@ -66,9 +73,9 @@ describe('Note app', () => {
 					.getByRole('Link')
 					.getByText('Testing with Playwright')
 					.click()
-				await expect(page.getByText('This blog has 0 likes.')).toBeVisible()
-				await page.getByRole('button', { name: 'Like' }).click()
-				await expect(page.getByText('This blog has 1 likes.')).toBeVisible()
+				await expect(page.getByText('Number of likes:0Like')).toBeVisible()
+				await page.getByRole('Button', { name: 'Like' }).click()
+				await expect(page.getByText('Number of likes:1Like')).toBeVisible()
 			})
 
 			test('it can be deleted by the creator', async ({ page }) => {
@@ -80,13 +87,15 @@ describe('Note app', () => {
 				page.on('dialog', async (dialog) => {
 					await dialog.accept()
 				})
-				await page.getByRole('button', { name: 'Delete' }).click()
+				await page.getByRole('Button', { name: 'Delete' }).click()
 
 				await expect(
-					page.getByText('Blog Testing with Playwright by Ted Tester deleted')
+					page.getByText(
+						"Blog 'Testing with Playwright' by Ted Tester deleted."
+					)
 				).toBeVisible()
 				await expect(
-					page.getByRole('button', { name: 'Create new blog' })
+					page.getByRole('Button', { name: 'Create new blog' })
 				).toBeVisible()
 				await expect(
 					page.getByRole('Link').getByText('Testing with Playwright')
@@ -94,7 +103,7 @@ describe('Note app', () => {
 			})
 
 			test('it can not be deleted by other users', async ({ page }) => {
-				await page.getByRole('button', { name: 'Log out' }).click()
+				await page.getByRole('Button', { name: 'Log out' }).click()
 				await login(page, 'ted', 'tedsecret')
 
 				await page
@@ -102,7 +111,7 @@ describe('Note app', () => {
 					.getByText('Testing with Playwright')
 					.click()
 				await expect(
-					page.getByRole('button', { name: 'Delete' })
+					page.getByRole('Button', { name: 'Delete' })
 				).not.toBeVisible()
 			})
 		})

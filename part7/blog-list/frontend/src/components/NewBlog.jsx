@@ -35,7 +35,7 @@ const NewBlog = ({ doCreate }) => {
 				<Stack spacing={2} maxWidth={400} marginTop={2}>
 					<TextField
 						color='secondary'
-						id='title'
+						data-testid='title'
 						label='Title'
 						variant='outlined'
 						type='text'
@@ -44,7 +44,7 @@ const NewBlog = ({ doCreate }) => {
 					/>
 					<TextField
 						color='secondary'
-						id='url'
+						data-testid='url'
 						label='URL'
 						variant='outlined'
 						type='text'
@@ -53,7 +53,7 @@ const NewBlog = ({ doCreate }) => {
 					/>
 					<TextField
 						color='secondary'
-						id='author'
+						data-testid='author'
 						label='Author'
 						variant='outlined'
 						type='text'

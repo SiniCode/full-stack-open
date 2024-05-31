@@ -17,26 +17,24 @@ const resetDatabase = async (request) => {
 }
 
 const login = async (page, username, password) => {
-	await page.getByTestId('username').fill(username)
-	await page.getByTestId('password').fill(password)
-	await page.getByRole('button', { name: 'Log in' }).click()
+	await page.getByTestId('username').click()
+	await page.keyboard.type(username)
+	await page.getByTestId('password').click()
+	await page.keyboard.type(password)
+	await page.getByRole('Button', { name: 'Log in' }).click()
 }
 
 const createBlog = async (page, title, author, url) => {
-	await page.getByRole('button', { name: 'create new blog' }).click()
-	await page.getByTestId('title').fill(title)
-	await page.getByTestId('author').fill(author)
-	await page.getByTestId('url').fill(url)
-	await page.getByRole('button', { name: 'Create' }).click()
+	await page.getByRole('Button', { name: 'Create new blog' }).click()
+	await page.getByTestId('title').click()
+	await page.keyboard.type(title)
+	await page.keyboard.press('Tab')
+	await page.keyboard.type(url)
+	await page.keyboard.press('Tab')
+	await page.keyboard.type(author)
+	await page.getByRole('Button', { name: 'Create' }).click()
 
 	await page.getByRole('Link').getByText(`${title} by ${author}`).waitFor()
 }
 
-const likeTimes = async (page, button, n) => {
-	for (let i = 0; i < n; i++) {
-		await button.click()
-		await page.getByText(`likes ${i + 1}`).waitFor()
-	}
-}
-
-export { resetDatabase, login, createBlog, likeTimes }
+export { resetDatabase, login, createBlog }

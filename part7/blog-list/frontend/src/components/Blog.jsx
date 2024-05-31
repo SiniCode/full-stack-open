@@ -28,11 +28,7 @@ const Blog = ({ blogs, handleLike, handleDelete, handleComment }) => {
 
 	return (
 		<div>
-			<Typography
-				component='h2'
-				variant='h5'
-				style={{ marginTop: 20, marginBottom: 20 }}
-			>
+			<Typography component='h2' variant='h5' style={{ marginBottom: 20 }}>
 				{blog.title} by {blog.author}
 			</Typography>
 			<Typography component='p' variant='body1'>

@@ -38,7 +38,7 @@ const CommentSection = ({ blog, addComment }) => {
 				<Stack spacing={1}>
 					<TextField
 						type='text'
-						id='comment'
+						data-testid='comment'
 						value={comment}
 						onChange={handleCommentChange}
 						label='New comment'

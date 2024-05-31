@@ -14,9 +14,12 @@ describe('NewBlog', () => {
 		const author = screen.getByTestId('author')
 		const button = screen.getByText('Create')
 
-		await user.type(title, 'Testing the testing')
-		await user.type(url, 'http://example.com')
-		await user.type(author, 'Ted Tester')
+		await user.click(title)
+		await user.keyboard('Testing the testing')
+		await user.click(url)
+		await user.keyboard('http://example.com')
+		await user.click(author)
+		await user.keyboard('Ted Tester')
 		await user.click(button)
 
 		expect(doCreate.mock.calls).toHaveLength(1)
