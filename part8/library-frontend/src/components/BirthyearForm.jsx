@@ -29,7 +29,6 @@ const BirthyearForm = (props) => {
 			props.notify('Birthyear is required')
 		} else {
 			addBirthyear({ variables: { name: name.value, born: Number(birthyear) } })
-			setName(null)
 			setBirthyear('')
 		}
 	}
