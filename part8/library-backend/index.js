@@ -1,11 +1,13 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
-// const { v1: uuid } = require('uuid')
+const { GraphQLError } = require('graphql')
+const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 
 const Book = require('./models/book')
 const Author = require('./models/author')
+const User = require('./models/user')
 
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI
@@ -103,6 +105,7 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+		me: User
   }
 
   type Mutation {
@@ -117,6 +120,16 @@ const typeDefs = `
       name: String!
       setBornTo: Int!
     ): Author
+
+		createUser(
+    	username: String!
+    	favoriteGenre: String!
+  	): User
+	
+  	login(
+    	username: String!
+    	password: String!
+  	): Token
   }
 
   type Book {
@@ -133,6 +146,16 @@ const typeDefs = `
     born: Int
     bookCount: Int
   }
+	
+	type User {
+  	username: String!
+  	favoriteGenre: String!
+  	id: ID!
+	}
+
+	type Token {
+  	value: String!
+	}
 `
 
 const resolvers = {
@@ -163,6 +186,9 @@ const resolvers = {
 		allAuthors: async () => {
 			return Author.find({})
 		},
+		me: (root, args, context) => {
+			return context.currentUser
+		},
 	},
 
 	Author: {
@@ -174,20 +200,109 @@ const resolvers = {
 	},
 
 	Mutation: {
-		addBook: async (root, args) => {
+		addBook: async (root, args, context) => {
+			const currentUser = context.currentUser
+
+			if (!currentUser) {
+				throw new GraphQLError('Authentication missing', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+					},
+				})
+			}
+
 			let author = await Author.findOne({ name: args.author })
 			if (!author) {
 				const newAuthor = new Author({ name: args.author })
-				console.log(newAuthor)
-				author = await newAuthor.save()
+				try {
+					author = await newAuthor.save()
+				} catch (error) {
+					throw new GraphQLError('Invalid author', {
+						extensions: {
+							code: 'BAD_USER_INPUT',
+							invalidArgs: args.author,
+							error,
+						},
+					})
+				}
 			}
+
 			const newBook = new Book({ ...args, author: author })
-			return newBook.save()
+			try {
+				await newBook.save()
+			} catch (error) {
+				throw new GraphQLError('Adding the book failed', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						error,
+					},
+				})
+			}
+
+			return newBook
 		},
-		editAuthor: async (root, args) => {
+
+		editAuthor: async (root, args, context) => {
+			const currentUser = context.currentUser
+
+			if (!currentUser) {
+				throw new GraphQLError('Authentication missing', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+					},
+				})
+			}
+
 			const target = await Author.findOne({ name: args.name })
 			target.born = args.setBornTo
-			return target.save()
+			try {
+				await target.save()
+			} catch (error) {
+				throw new GraphQLError('Setting the birthyear failed', {
+					extensions: {
+						code: 'INVALID_USER_INPUT',
+						error,
+					},
+				})
+			}
+
+			return target
+		},
+
+		createUser: async (root, args) => {
+			const newUser = new User({ ...args })
+
+			try {
+				await newUser.save()
+			} catch (error) {
+				throw new GraphQLError('Creating new user failed', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+						error,
+					},
+				})
+			}
+
+			return newUser
+		},
+
+		login: async (root, args) => {
+			const user = await User.findOne({ username: args.username })
+			console.log(user)
+			if (!user || args.password !== 'supersecret') {
+				throw new GraphQLError('Invalid credentials', {
+					extensions: {
+						code: 'BAD_USER_INPUT',
+					},
+				})
+			}
+
+			const userForToken = {
+				username: user.username,
+				id: user._id,
+			}
+
+			return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
 		},
 	},
 }
@@ -199,6 +314,14 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
 	listen: { port: 4000 },
+	context: async ({ req, res }) => {
+		const auth = req ? req.headers.authorization : null
+		if (auth && auth.startsWith('Bearer ')) {
+			const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
+			const currentUser = await User.findById(decodedToken.id)
+			return { currentUser }
+		}
+	},
 }).then(({ url }) => {
 	console.log(`Server ready at ${url}`)
 })
