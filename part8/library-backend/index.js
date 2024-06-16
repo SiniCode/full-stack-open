@@ -288,7 +288,6 @@ const resolvers = {
 
 		login: async (root, args) => {
 			const user = await User.findOne({ username: args.username })
-			console.log(user)
 			if (!user || args.password !== 'supersecret') {
 				throw new GraphQLError('Invalid credentials', {
 					extensions: {

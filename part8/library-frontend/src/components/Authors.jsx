@@ -21,7 +21,7 @@ const Authors = (props) => {
 			<table>
 				<tbody>
 					<tr>
-						<th></th>
+						<th>Name</th>
 						<th>Year of Birth</th>
 						<th>Number of Books</th>
 					</tr>
@@ -34,12 +34,14 @@ const Authors = (props) => {
 					))}
 				</tbody>
 			</table>
-			<BirthyearForm
-				notify={props.notify}
-				authors={authors.map((author) => {
-					return { value: author.name, label: author.name }
-				})}
-			/>
+			{props.token && (
+				<BirthyearForm
+					notify={props.notify}
+					authors={authors.map((author) => {
+						return { value: author.name, label: author.name }
+					})}
+				/>
+			)}
 		</div>
 	)
 }
