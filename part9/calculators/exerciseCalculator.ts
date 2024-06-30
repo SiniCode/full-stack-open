@@ -37,4 +37,43 @@ const calculateExercises = (dailyHours: number[], target: number): Result => {
 	};
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+interface Hours {
+	target: number;
+	dailyHours: number[];
+}
+
+const isValidArgument = (value: string, index: number): boolean => {
+	if (index > 1) {
+		if (isNaN(Number(value))) {
+			return false;
+		}
+	}
+	return true;
+};
+
+const parseHours = (args: string[]): Hours => {
+	if (args.length < 4) {
+		throw new Error(
+			`Number of arguments should be at least 2 but was ${args.length - 2}.`
+		);
+	}
+	if (args.every(isValidArgument)) {
+		return {
+			target: Number(args[2]),
+			dailyHours: args.slice(3).map((value: string): number => Number(value)),
+		};
+	} else {
+		throw new Error('Not all arguments were numbers.');
+	}
+};
+
+try {
+	const { target, dailyHours } = parseHours(process.argv);
+	console.log(calculateExercises(dailyHours, target));
+} catch (error: unknown) {
+	let errorMessage = 'Error! ';
+	if (error instanceof Error) {
+		errorMessage += error.message;
+	}
+	console.log(errorMessage);
+}
