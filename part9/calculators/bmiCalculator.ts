@@ -1,4 +1,4 @@
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
 	const bmi = weight / (height / 100) ** 2;
 	let message = '';
 	if (bmi < 16) {
@@ -43,13 +43,19 @@ const parseMeasurements = (args: string[]): Measurements => {
 	}
 };
 
-try {
-	const { height, weight } = parseMeasurements(process.argv);
-	console.log(calculateBmi(height, weight));
-} catch (error: unknown) {
-	let errorMessage = 'Error! ';
-	if (error instanceof Error) {
-		errorMessage += error.message;
+const main = () => {
+	try {
+		const { height, weight } = parseMeasurements(process.argv);
+		console.log(calculateBmi(height, weight));
+	} catch (error: unknown) {
+		let errorMessage = 'Error! ';
+		if (error instanceof Error) {
+			errorMessage += error.message;
+		}
+		console.log(errorMessage);
 	}
-	console.log(errorMessage);
+};
+
+if (typeof require !== 'undefined' && require.main === module) {
+	main();
 }
