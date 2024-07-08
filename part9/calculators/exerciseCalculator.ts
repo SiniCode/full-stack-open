@@ -8,7 +8,10 @@ interface Result {
 	ratingDescription: string;
 }
 
-const calculateExercises = (dailyHours: number[], target: number): Result => {
+export const calculateExercises = (
+	dailyHours: number[],
+	target: number
+): Result => {
 	const periodLength = dailyHours.length;
 	const trainingDays = dailyHours.filter((h) => h > 0).length;
 	const average =
@@ -67,13 +70,19 @@ const parseHours = (args: string[]): Hours => {
 	}
 };
 
-try {
-	const { target, dailyHours } = parseHours(process.argv);
-	console.log(calculateExercises(dailyHours, target));
-} catch (error: unknown) {
-	let errorMessage = 'Error! ';
-	if (error instanceof Error) {
-		errorMessage += error.message;
+const main = () => {
+	try {
+		const { target, dailyHours } = parseHours(process.argv);
+		console.log(calculateExercises(dailyHours, target));
+	} catch (error: unknown) {
+		let errorMessage = 'Error! ';
+		if (error instanceof Error) {
+			errorMessage += error.message;
+		}
+		console.log(errorMessage);
 	}
-	console.log(errorMessage);
+};
+
+if (typeof require !== 'undefined' && require.main === module) {
+	main();
 }
