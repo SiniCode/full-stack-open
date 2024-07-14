@@ -1,7 +1,11 @@
 import { TotalProps } from '../types';
 
 const Total = (props: TotalProps) => {
-	return <p>Number of exercises {props.total}</p>;
+	return (
+		<p>
+			<b>Total number of exercises {props.total}</b>
+		</p>
+	);
 };
 
 export default Total;
