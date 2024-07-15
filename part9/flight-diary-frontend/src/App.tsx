@@ -12,6 +12,7 @@ function App() {
 	const [diaryEntries, setDiaryEntries] = useState<NonSensitiveDiaryEntry[]>(
 		[]
 	);
+	const [errorMessage, setErrorMessage] = useState('');
 	const [date, setDate] = useState('');
 	const [visibility, setVisibility] = useState('');
 	const [weather, setWeather] = useState('');
@@ -31,21 +32,31 @@ function App() {
 			weather: weather as Weather,
 			comment,
 		};
-		addEntry(newEntry).then((data) => {
-			console.log(data);
-			setDiaryEntries(
-				diaryEntries.concat({
-					id: data.id,
-					date: data.date,
-					visibility: data.visibility,
-					weather: data.weather,
-				})
-			);
-		});
-		setDate('');
-		setVisibility('');
-		setWeather('');
-		setComment('');
+		addEntry(newEntry)
+			.then((data) => {
+				if (data) {
+					setDiaryEntries(
+						diaryEntries.concat({
+							id: data.id,
+							date: data.date,
+							visibility: data.visibility,
+							weather: data.weather,
+						})
+					);
+					setDate('');
+					setVisibility('');
+					setWeather('');
+					setComment('');
+				}
+			})
+			.catch((error: unknown) => {
+				if (error instanceof Error) {
+					setErrorMessage(error.message);
+					setTimeout(() => setErrorMessage(''), 5000);
+				} else {
+					console.error(error);
+				}
+			});
 	};
 
 	return (
@@ -53,6 +64,7 @@ function App() {
 			<h1>Flight Diary</h1>
 			<div className='component'>
 				<h2>Add new entry</h2>
+				<div className='error'>{errorMessage}</div>
 				<form onSubmit={handleSubmit}>
 					<div>
 						Date:

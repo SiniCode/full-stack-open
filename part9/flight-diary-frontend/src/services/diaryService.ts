@@ -12,5 +12,12 @@ export const getEntries = () => {
 export const addEntry = (object: NewDiaryEntry) => {
 	return axios
 		.post<DiaryEntry>(baseUrl, object)
-		.then((response) => response.data);
+		.then((response) => response.data)
+		.catch((error) => {
+			if (axios.isAxiosError(error) && error.response) {
+				throw new Error(error.response.data);
+			} else {
+				console.error(error);
+			}
+		});
 };
