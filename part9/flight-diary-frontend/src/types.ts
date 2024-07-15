@@ -32,3 +32,22 @@ export interface DiaryEntryProps {
 export interface EntryListProps {
 	entries: NonSensitiveDiaryEntry[];
 }
+
+export interface EntryFormProps {
+	entries: NonSensitiveDiaryEntry[];
+	setEntries: React.Dispatch<React.SetStateAction<NonSensitiveDiaryEntry[]>>;
+}
+
+export interface InputProps {
+	label: string;
+	id: string;
+	setValue: React.Dispatch<React.SetStateAction<string>>;
+	value?: string;
+}
+
+export interface RadioButtonsProps {
+	legend: string;
+	name: string;
+	options: string[];
+	setValue: React.Dispatch<React.SetStateAction<string>>;
+}
