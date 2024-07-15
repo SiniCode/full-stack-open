@@ -27,10 +27,20 @@ h1 {
   padding: 5px;
 }
 
+legend {
+  font-weight: bold;
+}
+
+.commentLabel {
+  display: block;
+  align-content: center;
+}
+
 input, textarea {
   border-radius: 8px;
   padding: 5px;
   margin: 5px;
+  font-family: inherit;
 }
 
 .component {

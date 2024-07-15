@@ -43,9 +43,6 @@ function App() {
 							weather: data.weather,
 						})
 					);
-					setDate('');
-					setVisibility('');
-					setWeather('');
 					setComment('');
 				}
 			})
@@ -67,32 +64,100 @@ function App() {
 				<div className='error'>{errorMessage}</div>
 				<form onSubmit={handleSubmit}>
 					<div>
-						Date:
+						<label htmlFor='date'>
+							<b>Date:</b>
+						</label>
 						<input
-							value={date}
-							placeholder='YYYY-MM-DD'
+							type='date'
+							id='date'
 							onChange={(event) => setDate(event.target.value)}
+							required
 						/>
 					</div>
 					<div>
-						Visibility:
+						<legend>Visibility:</legend>
 						<input
-							value={visibility}
-							placeholder='great/good/ok/poor'
-							onChange={(event) => setVisibility(event.target.value)}
+							type='radio'
+							name='visibility'
+							id='visibilityGreat'
+							value='great'
+							onChange={() => setVisibility('great')}
 						/>
-					</div>
-					<div>
-						Weather:
+						<label htmlFor='visibilityGreat'>great</label>
 						<input
-							value={weather}
-							placeholder='sunny/rainy/cloudy/stormy/windy'
-							onChange={(event) => setWeather(event.target.value)}
+							type='radio'
+							name='visibility'
+							id='visibilityGood'
+							value='good'
+							onChange={() => setVisibility('good')}
 						/>
+						<label htmlFor='visibilityGood'>good</label>
+						<input
+							type='radio'
+							name='visibility'
+							id='visibilityOk'
+							value='ok'
+							onChange={() => setVisibility('ok')}
+						/>
+						<label htmlFor='visibilityOk'>ok</label>
+						<input
+							type='radio'
+							name='visibility'
+							id='visibilityPoor'
+							value='poor'
+							onChange={() => setVisibility('poor')}
+						/>
+						<label htmlFor='visibilityPoor'>poor</label>
 					</div>
 					<div>
-						Comment:
+						<legend>Weather:</legend>
+						<input
+							type='radio'
+							name='weather'
+							id='weatherSunny'
+							value='sunny'
+							onChange={() => setWeather('sunny')}
+						/>
+						<label htmlFor='weatherSunny'>sunny</label>
+						<input
+							type='radio'
+							name='weather'
+							id='weatherRainy'
+							value='rainy'
+							onChange={() => setWeather('rainy')}
+						/>
+						<label htmlFor='weatherRainy'>rainy</label>
+						<input
+							type='radio'
+							name='weather'
+							id='weatherCloudy'
+							value='cloudy'
+							onChange={() => setWeather('cloudy')}
+						/>
+						<label htmlFor='weatherCloudy'>cloudy</label>
+						<input
+							type='radio'
+							name='weather'
+							id='weatherStormy'
+							value='stormy'
+							onChange={() => setWeather('stormy')}
+						/>
+						<label htmlFor='weatherStormy'>stormy</label>
+						<input
+							type='radio'
+							name='weather'
+							id='weatherWindy'
+							value='windy'
+							onChange={() => setWeather('windy')}
+						/>
+						<label htmlFor='weatherWindy'>windy</label>
+					</div>
+					<div>
+						<label htmlFor='comment' className='commentLabel'>
+							<b>Comment:</b>
+						</label>
 						<textarea
+							id='comment'
 							value={comment}
 							onChange={(event) => setComment(event.target.value)}
 						/>
