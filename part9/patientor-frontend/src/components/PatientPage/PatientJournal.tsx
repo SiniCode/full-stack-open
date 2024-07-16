@@ -5,9 +5,14 @@ import {
 	AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { PatientJournalProps, Entry } from '../../types';
+import { Entry, Diagnosis } from '../../types';
 
-const PatientJournal = (props: PatientJournalProps) => {
+interface Props {
+	entries: Entry[];
+	diagnoses: Diagnosis[];
+}
+
+const PatientJournal = (props: Props) => {
 	if (props.entries.length === 0) {
 		return (
 			<div>
@@ -18,6 +23,14 @@ const PatientJournal = (props: PatientJournalProps) => {
 			</div>
 		);
 	}
+
+	const getCodeExplanation = (code: string) => {
+		const diagnosis = props.diagnoses.find((d: Diagnosis) => d.code === code);
+		if (diagnosis === undefined) {
+			return '';
+		}
+		return diagnosis.name;
+	};
 
 	return (
 		<div>
@@ -36,7 +49,9 @@ const PatientJournal = (props: PatientJournalProps) => {
 								<div>
 									<Typography fontWeight='bold'>Diagnoses</Typography>
 									{entry.diagnosisCodes.map((code: string) => (
-										<Typography key={code}>- {code}</Typography>
+										<Typography key={code}>
+											- {code} {getCodeExplanation(code)}
+										</Typography>
 									))}
 								</div>
 							)}

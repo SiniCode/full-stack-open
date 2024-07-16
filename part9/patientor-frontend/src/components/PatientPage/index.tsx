@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import { Patient } from '../../types';
+import { Patient, Diagnosis } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
 
-const PatientPage = () => {
+interface Props {
+	diagnoses: Diagnosis[];
+}
+
+const PatientPage = (props: Props) => {
 	const [patient, setPatient] = useState<Patient | undefined>(undefined);
 	const [error, setError] = useState('');
 	const id = useParams().id || '';
@@ -44,7 +48,7 @@ const PatientPage = () => {
 			<Typography>Date of birth: {patient.dateOfBirth}</Typography>
 			<Typography>Gender: {patient.gender}</Typography>
 			<Typography>Occupation: {patient.occupation}</Typography>
-			<PatientJournal entries={patient.entries} />
+			<PatientJournal entries={patient.entries} diagnoses={props.diagnoses} />
 		</div>
 	);
 };

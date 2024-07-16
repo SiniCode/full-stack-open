@@ -76,4 +76,5 @@ export type PatientFormValues = Omit<Patient, 'id' | 'entries'>;
 
 export interface PatientJournalProps {
 	entries: Entry[];
+	diagnoses: Diagnosis[];
 }
