@@ -51,6 +51,7 @@ const parseNewPatient = (object: unknown): PatientWithoutId => {
 			ssn: parseField('ssn', object.ssn),
 			gender: parseGender(object.gender),
 			occupation: parseField('occupation', object.occupation),
+			entries: [],
 		};
 
 		return newPatient;
