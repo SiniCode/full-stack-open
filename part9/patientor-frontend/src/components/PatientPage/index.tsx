@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import { Patient } from '../../types';
 import patientService from '../../services/patients';
+import PatientJournal from './PatientJournal';
 
 const PatientPage = () => {
 	const [patient, setPatient] = useState<Patient | undefined>(undefined);
@@ -43,9 +44,7 @@ const PatientPage = () => {
 			<Typography>Date of birth: {patient.dateOfBirth}</Typography>
 			<Typography>Gender: {patient.gender}</Typography>
 			<Typography>Occupation: {patient.occupation}</Typography>
-			<Typography variant='h6' style={{ marginTop: 10 }}>
-				Patient Journal
-			</Typography>
+			<PatientJournal entries={patient.entries} />
 		</div>
 	);
 };
