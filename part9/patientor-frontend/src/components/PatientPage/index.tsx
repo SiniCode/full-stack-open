@@ -39,15 +39,29 @@ const PatientPage = (props: Props) => {
 		);
 	}
 
+	const getBirthDate = () => {
+		const dateString = Date.parse(patient.dateOfBirth);
+		const dateObject = new Date(dateString);
+		return dateObject.toDateString();
+	};
+
 	return (
 		<div style={{ marginTop: 20 }}>
 			<Typography variant='h5' style={{ marginBottom: 10 }}>
 				{patient.name}
 			</Typography>
-			<Typography>SSN: {patient.ssn}</Typography>
-			<Typography>Date of birth: {patient.dateOfBirth}</Typography>
-			<Typography>Gender: {patient.gender}</Typography>
-			<Typography>Occupation: {patient.occupation}</Typography>
+			<Typography>
+				<b>SSN:</b> {patient.ssn}
+			</Typography>
+			<Typography>
+				<b>Date of birth:</b> {getBirthDate()}
+			</Typography>
+			<Typography>
+				<b>Gender:</b> {patient.gender}
+			</Typography>
+			<Typography>
+				<b>Occupation:</b> {patient.occupation}
+			</Typography>
 			<PatientJournal entries={patient.entries} diagnoses={props.diagnoses} />
 		</div>
 	);

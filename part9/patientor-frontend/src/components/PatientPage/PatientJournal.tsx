@@ -5,6 +5,7 @@ import {
 	AccordionDetails,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EntryDetails from './EntryDetails';
 import { Entry, Diagnosis } from '../../types';
 
 interface Props {
@@ -41,10 +42,10 @@ const PatientJournal = (props: Props) => {
 				return (
 					<Accordion key={entry.id}>
 						<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-							<Typography>{entry.date}</Typography>
+							<Typography fontWeight='bold'>{entry.date}</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<Typography>{entry.description}</Typography>
+							<Typography fontStyle='italic'>{entry.description}</Typography>
 							{entry.diagnosisCodes && (
 								<div>
 									<Typography fontWeight='bold'>Diagnoses</Typography>
@@ -55,6 +56,8 @@ const PatientJournal = (props: Props) => {
 									))}
 								</div>
 							)}
+							<Typography>Specialist: {entry.specialist}</Typography>
+							<EntryDetails entry={entry} />
 						</AccordionDetails>
 					</Accordion>
 				);
