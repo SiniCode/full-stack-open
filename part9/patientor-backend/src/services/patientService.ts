@@ -1,6 +1,12 @@
 import { v1 as uuid } from 'uuid';
 import patients from '../../data/patients';
-import { NonSensitivePatient, Patient, PatientWithoutId } from '../types';
+import {
+	Entry,
+	EntryWithoutId,
+	NonSensitivePatient,
+	Patient,
+	PatientWithoutId,
+} from '../types';
 
 const getPatients = (): NonSensitivePatient[] => {
 	return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
@@ -31,8 +37,24 @@ const addPatient = (data: PatientWithoutId): Patient => {
 	return newPatient;
 };
 
+const addEntry = (patientId: string, data: EntryWithoutId): Entry => {
+	const target = patients.find((patient: Patient) => patient.id === patientId);
+	if (target === undefined) {
+		throw new Error('Invalid patient id');
+	}
+
+	const newEntry: Entry = {
+		id: uuid(),
+		...data,
+	};
+
+	target.entries = [newEntry].concat(target.entries);
+	return newEntry;
+};
+
 export default {
 	getPatients,
 	getPatient,
 	addPatient,
+	addEntry,
 };
