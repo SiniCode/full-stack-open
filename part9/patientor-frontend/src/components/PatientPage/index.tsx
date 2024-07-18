@@ -6,7 +6,6 @@ import { Patient, Diagnosis, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
 import NewEntriesSection from './NewEntries';
-import diagnoses from '../../services/diagnoses';
 
 interface Props {
 	diagnoses: Diagnosis[];
