@@ -30,7 +30,7 @@ interface HealthCheckEntry extends BaseEntry {
 	healthCheckRating: HealthCheckRating;
 }
 
-interface Discharge {
+export interface Discharge {
 	date: string;
 	criteria: string;
 }

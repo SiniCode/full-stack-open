@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Typography, Button, Alert } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Patient, Diagnosis, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
-import HealthCheckEntryForm from './HealthCheckEntryForm';
-import OccupationalEntryForm from './OccupationalEntryForm';
+import NewEntriesSection from './NewEntries';
 
 interface Props {
 	diagnoses: Diagnosis[];
@@ -15,7 +14,7 @@ interface Props {
 const PatientPage = (props: Props) => {
 	const [patient, setPatient] = useState<Patient | undefined>(undefined);
 	const [error, setError] = useState('');
-	const [form, setForm] = useState<string>();
+	const [form, setForm] = useState<string>('');
 	const id = useParams().id || '';
 
 	useEffect(() => {
@@ -47,7 +46,7 @@ const PatientPage = (props: Props) => {
 		try {
 			const entry = await patientService.addEntry(id, values);
 			setPatient({ ...patient, entries: [entry].concat(patient.entries) });
-			setForm(undefined);
+			setForm('');
 		} catch (e: unknown) {
 			if (axios.isAxiosError(e)) {
 				if (e?.response?.data && typeof e?.response?.data === 'string') {
@@ -93,33 +92,12 @@ const PatientPage = (props: Props) => {
 			<Typography>
 				<b>Occupation:</b> {patient.occupation}
 			</Typography>
-			<Button variant='outlined' onClick={() => setForm('HealthCheck')}>
-				Add new health check entry
-			</Button>
-			<Button variant='outlined' onClick={() => setForm('Occupational')}>
-				Add new occupational healthcare entry
-			</Button>
-			<Button variant='outlined' onClick={() => setForm('Hospital')}>
-				Add new hospital entry
-			</Button>
-			{error && <Alert severity='error'>{error}</Alert>}
-			{form === 'HealthCheck' && (
-				<HealthCheckEntryForm
-					onCancel={() => setForm(undefined)}
-					onSubmit={submitNewEntry}
-				/>
-			)}
-			{form === 'Occupational' && (
-				<OccupationalEntryForm
-					onCancel={() => setForm(undefined)}
-					onSubmit={submitNewEntry}
-				/>
-			)}
-			{form === 'Hospital' && (
-				<Button variant='contained' onClick={() => setForm(undefined)}>
-					Close hospital entry
-				</Button>
-			)}
+			<NewEntriesSection
+				error={error}
+				onSubmit={submitNewEntry}
+				form={form}
+				setForm={setForm}
+			/>
 			<PatientJournal entries={patient.entries} diagnoses={props.diagnoses} />
 		</div>
 	);
