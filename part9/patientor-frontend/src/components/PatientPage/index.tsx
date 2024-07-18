@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography } from '@mui/material';
-import { Patient, Diagnosis } from '../../types';
+import axios from 'axios';
+import { Typography, Button, Alert } from '@mui/material';
+import { Patient, Diagnosis, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
+import HealthCheckEntryForm from './HealthCheckEntryForm';
 
 interface Props {
 	diagnoses: Diagnosis[];
@@ -12,6 +14,7 @@ interface Props {
 const PatientPage = (props: Props) => {
 	const [patient, setPatient] = useState<Patient | undefined>(undefined);
 	const [error, setError] = useState('');
+	const [form, setForm] = useState<string>();
 	const id = useParams().id || '';
 
 	useEffect(() => {
@@ -39,6 +42,33 @@ const PatientPage = (props: Props) => {
 		);
 	}
 
+	const submitNewEntry = async (values: EntryWithoutId) => {
+		try {
+			const entry = await patientService.addEntry(id, values);
+			setPatient({ ...patient, entries: [entry].concat(patient.entries) });
+			setForm(undefined);
+		} catch (e: unknown) {
+			if (axios.isAxiosError(e)) {
+				if (e?.response?.data && typeof e?.response?.data === 'string') {
+					const message = e.response.data.replace(
+						'Something went wrong. Error: ',
+						''
+					);
+					console.error(message);
+					setError(message);
+					setTimeout(() => setError(''), 5000);
+				} else {
+					setError('Unrecognized axios error');
+					setTimeout(() => setError(''), 5000);
+				}
+			} else {
+				console.error('Unknown error', e);
+				setError('Unknown error');
+				setTimeout(() => setError(''), 5000);
+			}
+		}
+	};
+
 	const getBirthDate = () => {
 		const dateString = Date.parse(patient.dateOfBirth);
 		const dateObject = new Date(dateString);
@@ -62,6 +92,32 @@ const PatientPage = (props: Props) => {
 			<Typography>
 				<b>Occupation:</b> {patient.occupation}
 			</Typography>
+			<Button variant='outlined' onClick={() => setForm('HealthCheck')}>
+				Add new health check entry
+			</Button>
+			<Button variant='outlined' onClick={() => setForm('Occupational')}>
+				Add new occupational healthcare entry
+			</Button>
+			<Button variant='outlined' onClick={() => setForm('Hospital')}>
+				Add new hospital entry
+			</Button>
+			{error && <Alert severity='error'>{error}</Alert>}
+			{form === 'HealthCheck' && (
+				<HealthCheckEntryForm
+					onCancel={() => setForm(undefined)}
+					onSubmit={submitNewEntry}
+				/>
+			)}
+			{form === 'Occupational' && (
+				<Button variant='contained' onClick={() => setForm(undefined)}>
+					Close occupational entry
+				</Button>
+			)}
+			{form === 'Hospital' && (
+				<Button variant='contained' onClick={() => setForm(undefined)}>
+					Close hospital entry
+				</Button>
+			)}
 			<PatientJournal entries={patient.entries} diagnoses={props.diagnoses} />
 		</div>
 	);

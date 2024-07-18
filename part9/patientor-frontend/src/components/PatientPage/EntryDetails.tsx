@@ -68,7 +68,7 @@ const EntryDetails = (props: Props) => {
 					<LocalHospitalRounded />
 					<Typography>Discharged: {getDate(entry.discharge.date)}</Typography>
 					<Typography>
-						Discharging criteria: <i>{entry.discharge.criteria}</i>
+						Discharging criteria: {entry.discharge.criteria}
 					</Typography>
 				</div>
 			);
