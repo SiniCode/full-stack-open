@@ -1,18 +1,30 @@
 import { useState, SyntheticEvent } from 'react';
-import { TextField, Grid, Button, Typography } from '@mui/material';
-import { EntryWithoutId, HealthCheckRating, Diagnosis } from '../../types';
+import {
+	Box,
+	Grid,
+	Button,
+	Typography,
+	Input,
+	InputLabel,
+	Select,
+	SelectChangeEvent,
+	MenuItem,
+	Chip,
+} from '@mui/material';
+import { EntryWithoutId, HealthCheckRating, Diagnosis } from '../../../types';
 
 interface Props {
 	onCancel: () => void;
 	onSubmit: (values: EntryWithoutId) => void;
+	diagnoses: string[];
 }
 
-const HealthCheckEntryForm = ({ onCancel, onSubmit }: Props) => {
+const HealthCheckEntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
 	const [description, setDescription] = useState('');
 	const [date, setDate] = useState('');
 	const [specialist, setSpecialist] = useState('');
-	const [diagnosisCodes, setDiagnosisCodes] = useState('');
-	const [healthCheckRating, setHealthCheckRating] = useState(0);
+	const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
+	const [healthCheckRating, setHealthCheckRating] = useState('');
 
 	const addEntry = (event: SyntheticEvent) => {
 		event.preventDefault();
@@ -21,56 +33,97 @@ const HealthCheckEntryForm = ({ onCancel, onSubmit }: Props) => {
 			description,
 			date,
 			specialist,
-			healthCheckRating: healthCheckRating as HealthCheckRating,
+			healthCheckRating: Number(healthCheckRating[0]) as HealthCheckRating,
 		};
-		if (diagnosisCodes !== '') {
-			entry.diagnosisCodes = diagnosisCodes.split(',') as Array<
-				Diagnosis['code']
-			>;
+		if (diagnosisCodes.length > 0) {
+			entry.diagnosisCodes = diagnosisCodes as Array<Diagnosis['code']>;
 		}
 		onSubmit(entry);
 	};
 
+	const handleCodeChange = (event: SelectChangeEvent<string[]>) => {
+		const {
+			target: { value },
+		} = event;
+		setDiagnosisCodes(typeof value === 'string' ? value.split(',') : value);
+	};
+
+	const ratings = [
+		'0 (Healthy)',
+		'1 (Low risk)',
+		'2 (High risk)',
+		'3 (Critical risk)',
+	];
+
 	return (
-		<div style={{ padding: 20 }}>
-			<Typography variant='h6'>Add new health check entry</Typography>
+		<Box
+			sx={{ border: '2px solid grey' }}
+			padding={5}
+			marginTop={5}
+			marginBottom={5}
+			borderRadius={2}
+			maxWidth={'640px'}
+		>
+			<Typography variant='h6' style={{ marginBottom: 20 }}>
+				New health check entry
+			</Typography>
 			<form onSubmit={addEntry}>
-				<TextField
-					label='Description'
+				<InputLabel>Description:</InputLabel>
+				<Input
 					fullWidth
 					value={description}
 					onChange={({ target }) => setDescription(target.value)}
 					required
 				/>
-				<TextField
-					label='Date'
-					placeholder='YYYY-MM-DD'
+				<InputLabel>Date:</InputLabel>
+				<Input
 					fullWidth
+					type='date'
 					value={date}
 					onChange={({ target }) => setDate(target.value)}
 					required
 				/>
-				<TextField
-					label='Specialist'
+				<InputLabel>Specialist:</InputLabel>
+				<Input
 					fullWidth
 					value={specialist}
 					onChange={({ target }) => setSpecialist(target.value)}
 					required
 				/>
-				<TextField
-					label='Diagnosis codes (separated by comma)'
+				<InputLabel>Diagnosis codes:</InputLabel>
+				<Select
 					fullWidth
+					multiple
 					value={diagnosisCodes}
-					onChange={({ target }) => setDiagnosisCodes(target.value)}
-				/>
-				<TextField
-					label='Health check rating (0 - 3)'
+					onChange={handleCodeChange}
+					renderValue={(selected: string[]) => (
+						<>
+							{selected.map((value: string) => (
+								<Chip key={value} label={value} />
+							))}
+						</>
+					)}
+				>
+					{diagnoses.map((code) => (
+						<MenuItem key={code} value={code}>
+							{code}
+						</MenuItem>
+					))}
+				</Select>
+				<InputLabel>Health check rating:</InputLabel>
+				<Select
 					fullWidth
 					value={healthCheckRating}
-					onChange={({ target }) => setHealthCheckRating(Number(target.value))}
-					required
-				/>
-				<Grid>
+					onChange={({ target }) => setHealthCheckRating(target.value)}
+					renderValue={(selected: string) => <Chip label={selected} />}
+				>
+					{ratings.map((value) => (
+						<MenuItem key={value} value={value}>
+							{value}
+						</MenuItem>
+					))}
+				</Select>
+				<Grid marginTop={5}>
 					<Grid item>
 						<Button
 							color='secondary'
@@ -96,7 +149,7 @@ const HealthCheckEntryForm = ({ onCancel, onSubmit }: Props) => {
 				</Grid>
 			</form>
 			<br />
-		</div>
+		</Box>
 	);
 };
 

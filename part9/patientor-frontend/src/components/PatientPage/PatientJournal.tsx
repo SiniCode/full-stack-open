@@ -35,7 +35,7 @@ const PatientJournal = (props: Props) => {
 
 	return (
 		<div>
-			<Typography variant='h6' style={{ marginTop: 10 }}>
+			<Typography variant='h6' style={{ marginTop: 20, marginBottom: 10 }}>
 				Patient Journal
 			</Typography>
 			{props.entries.map((entry: Entry) => {

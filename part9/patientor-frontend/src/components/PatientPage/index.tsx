@@ -6,6 +6,7 @@ import { Patient, Diagnosis, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
 import NewEntriesSection from './NewEntries';
+import diagnoses from '../../services/diagnoses';
 
 interface Props {
 	diagnoses: Diagnosis[];
@@ -97,6 +98,7 @@ const PatientPage = (props: Props) => {
 				onSubmit={submitNewEntry}
 				form={form}
 				setForm={setForm}
+				diagnoses={props.diagnoses}
 			/>
 			<PatientJournal entries={patient.entries} diagnoses={props.diagnoses} />
 		</div>
