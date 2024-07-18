@@ -6,6 +6,7 @@ import { Patient, Diagnosis, EntryWithoutId } from '../../types';
 import patientService from '../../services/patients';
 import PatientJournal from './PatientJournal';
 import HealthCheckEntryForm from './HealthCheckEntryForm';
+import OccupationalEntryForm from './OccupationalEntryForm';
 
 interface Props {
 	diagnoses: Diagnosis[];
@@ -109,9 +110,10 @@ const PatientPage = (props: Props) => {
 				/>
 			)}
 			{form === 'Occupational' && (
-				<Button variant='contained' onClick={() => setForm(undefined)}>
-					Close occupational entry
-				</Button>
+				<OccupationalEntryForm
+					onCancel={() => setForm(undefined)}
+					onSubmit={submitNewEntry}
+				/>
 			)}
 			{form === 'Hospital' && (
 				<Button variant='contained' onClick={() => setForm(undefined)}>
